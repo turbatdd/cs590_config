@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: stock-service
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        service-name: stock-service
+        instance-id: stock-service-${server.port}
+
+server:
+  port: 8900
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+logging:
+  level:
+    io.micrometer.tracing: DEBUG
+    io.opentelemetry: DEBUG
+    org.springframework.cloud.consul: TRACE
+    org.springframework.cloud.client.serviceregistry: DEBUG

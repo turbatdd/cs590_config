@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: product-service
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        service-name: product-service
+        instance-id: product-service-${server.port}
+
+    openfeign:
+      micrometer:
+        enabled: true
+
+    circuitbreaker:
+      resilience4j:
+        disable-time-limiter: true
+
+server:
+  port: 8901
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    io.micrometer.tracing: DEBUG
+    io.opentelemetry: DEBUG
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      stockService:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
